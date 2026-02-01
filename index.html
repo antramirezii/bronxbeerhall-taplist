@@ -5,20 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Bronx Beer Hall Tap List</title>
 
-  <!-- Aristotle-like typography (Merriweather + Roboto) -->
+  <!-- Aristotle-like typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      /* Aristotle vibe: classic type + orange accent */
+      /* Classic type + orange accent */
       --font-body: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
       --font-display: "Merriweather", Georgia, "Times New Roman", serif;
 
-      /* Orange accent (adjust if you want it more/less bright) */
-      --accent: #f59e0b;
-      --accent-hover: #d97706;
+      /* Orange for active tab */
+      --accent: #f97316;       /* orange */
+      --accent-hover: #ea580c; /* darker orange */
 
       --ink: #111827;
       --muted: rgba(17,24,39,0.75);
@@ -58,7 +58,10 @@
       margin: 6px 0 8px;
       box-shadow: 0 1px 10px var(--shadow);
     }
-    .mobile-cta:hover{ background: var(--accent-hover); border-color: var(--accent-hover); }
+    .mobile-cta:hover{
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
     .mobile-note{
       display: none;
       text-align: center;
@@ -88,9 +91,14 @@
       box-shadow: 0 1px 8px rgba(0,0,0,0.05);
       transition: transform 0.06s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
     }
-    .tab:hover{ border-color: rgba(17,24,39,0.35); }
-    .tab:active{ transform: translateY(1px); }
+    .tab:hover{
+      border-color: rgba(17,24,39,0.35);
+    }
+    .tab:active{
+      transform: translateY(1px);
+    }
 
+    /* Active button is ORANGE */
     .tab.active{
       background: var(--accent);
       color: #fff;
@@ -98,7 +106,7 @@
       box-shadow: 0 1px 12px var(--shadow);
     }
 
-    /* Taplist readability + theme-ish typography */
+    /* Taplist readability */
     .taplistio-embed{
       font-family: var(--font-body);
       font-size: 18px;
@@ -138,7 +146,7 @@
       max-width: 70ch;
     }
 
-    /* Mobile: hide embed, show CTA (we add .is-mobile via JS) */
+    /* Mobile behavior: hide embed and show CTA */
     body.is-mobile .mobile-cta,
     body.is-mobile .mobile-note{ display: block; }
 
@@ -172,7 +180,7 @@
     <script>
       function norm(s){ return (s || "").trim().toLowerCase(); }
 
-      // Detect real mobile devices by UA so Google Sites iframe width does not break desktop
+      // Detect real mobile devices by user-agent so Google Sites embed width does not break desktop
       const isMobileUA = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
       if (isMobileUA) document.body.classList.add("is-mobile");
 
@@ -219,14 +227,4 @@
         const timer = setInterval(() => {
           tries++;
           const ok = applyFilter("On Tap");
-          if (ok || tries > 80) clearInterval(timer);
-        }, 250);
-      })();
-    </script>
-
-    <!-- Taplist embed -->
-    <script async src="https://taplist.io/embed/embed.js" charset="utf-8"></script>
-
-  </div>
-</body>
-</html>
+          if (ok
