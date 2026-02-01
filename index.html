@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Bronx Beer Hall Tap List</title>
+  <title>The Bronx Beer Hall Tap List</title>
 
   <!-- Aristotle-like typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,13 +12,12 @@
 
   <style>
     :root{
-      /* Classic type + orange accent */
       --font-body: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
       --font-display: "Merriweather", Georgia, "Times New Roman", serif;
 
-      /* Orange for active tab */
-      --accent: #f97316;       /* orange */
-      --accent-hover: #ea580c; /* darker orange */
+      /* Orange accent for active button */
+      --accent: #f97316;
+      --accent-hover: #ea580c;
 
       --ink: #111827;
       --muted: rgba(17,24,39,0.75);
@@ -70,12 +69,21 @@
       margin: 0 0 14px;
     }
 
-    /* Desktop tabs */
+    /* Desktop tabs (sticky) */
     .tabs{
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
-      margin: 8px 0 14px;
+
+      background: var(--bg);
+      padding: 10px 0;
+
+      margin: 0 0 14px;
+      border-bottom: 1px solid rgba(17,24,39,0.10);
     }
 
     .tab{
@@ -98,7 +106,7 @@
       transform: translateY(1px);
     }
 
-    /* Active button is ORANGE */
+    /* Active button is orange */
     .tab.active{
       background: var(--accent);
       color: #fff;
@@ -146,7 +154,7 @@
       max-width: 70ch;
     }
 
-    /* Mobile behavior: hide embed and show CTA */
+    /* Mobile behavior: show CTA, hide tabs + embedded list */
     body.is-mobile .mobile-cta,
     body.is-mobile .mobile-note{ display: block; }
 
@@ -160,13 +168,13 @@
 
     <!-- Mobile: open Taplist directly -->
     <a class="mobile-cta" href="https://taplist.io/bronxbeerhall" target="_blank" rel="noopener">
-      Open Tap List
+      View Today&#39;s Tap List
     </a>
     <div class="mobile-note">
-      Use Taplist filters to view On Tap, Cans &amp; Bottles, and Wine.
+      Taplist lets you filter On Tap, Cans &amp; Bottles, and Wine.
     </div>
 
-    <!-- Desktop: embedded list + section buttons -->
+    <!-- Desktop: embedded list + sticky section buttons -->
     <div class="tabs">
       <button class="tab active" type="button" data-section="On Tap">On Tap</button>
       <button class="tab" type="button" data-section="Cans &amp; Bottles">Cans &amp; Bottles</button>
@@ -180,7 +188,7 @@
     <script>
       function norm(s){ return (s || "").trim().toLowerCase(); }
 
-      // Detect real mobile devices by user-agent so Google Sites embed width does not break desktop
+      // Mobile detection by user-agent so Google Sites iframe width does not break desktop
       const isMobileUA = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
       if (isMobileUA) document.body.classList.add("is-mobile");
 
@@ -227,4 +235,14 @@
         const timer = setInterval(() => {
           tries++;
           const ok = applyFilter("On Tap");
-          if (ok
+          if (ok || tries > 80) clearInterval(timer);
+        }, 250);
+      })();
+    </script>
+
+    <!-- Taplist embed -->
+    <script async src="https://taplist.io/embed/embed.js" charset="utf-8"></script>
+
+  </div>
+</body>
+</html>
