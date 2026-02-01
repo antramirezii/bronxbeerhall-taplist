@@ -3,11 +3,26 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>The Bronx Beer Hall Tap List</title>
+  <title>Bronx Beer Hall Tap List</title>
 
   <style>
     body { margin: 0; font-family: Arial, sans-serif; background: #ffffff; }
     .wrap { max-width: 980px; margin: 0 auto; padding: 12px 14px; }
+
+    /* Mobile helper button: only useful when embedded on a phone */
+    .open-full{
+      display:none; /* hidden by default */
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+      text-decoration: none;
+      font-weight: 800;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,0.18);
+      background: #fff;
+      margin: 6px 0 12px;
+    }
 
     /* Button row */
     .tabs {
@@ -40,7 +55,7 @@
     .taplistio-beverage-details { font-size: 0.92em; opacity: 0.92; margin-top: 6px; }
     .taplistio-beverage-description { margin-top: 8px; max-width: 70ch; }
 
-    /* Mobile: remove clutter */
+    /* Mobile: remove clutter + show "Open Full Tap List" button */
     @media (max-width: 650px) {
       .taplistio-embed { font-size: 16px; }
       .tab { width: 100%; text-align: center; }
@@ -49,6 +64,8 @@
       .taplistio-metric-ibu,
       .taplistio-metric-srm,
       .taplistio-metric-temperature { display: none; }
+
+      .open-full { display: block; text-align: center; }
     }
   </style>
 </head>
@@ -56,19 +73,29 @@
 <body>
   <div class="wrap">
 
+    <!-- This button is shown on mobile, but ONLY when embedded (Google Sites iframe) -->
+    <a class="open-full" id="openFull" href="https://taplist.io/bronxbeerhall" target="_blank" rel="noopener">
+      Open Full Tap List
+    </a>
+
     <div class="tabs">
       <button class="tab active" type="button" data-section="On Tap">On Tap</button>
-      <button class="tab" type="button" data-section="Cans & Bottles">Cans & Bottles</button>
+      <button class="tab" type="button" data-section="Cans &amp; Bottles">Cans &amp; Bottles</button>
       <button class="tab" type="button" data-section="Wine">Wine</button>
     </div>
 
-    <!-- Taplist goes here -->
+    <!-- Taplist embed -->
     <div class="taplistio-embed-menu" data-venue="bronxbeerhall"></div>
 
     <script>
-      // Make text comparisons forgiving
-      function norm(s) { return (s || "").trim().toLowerCase(); }
+      // Only show the "Open Full Tap List" helper when this page is EMBEDDED (e.g., inside Google Sites).
+      (function () {
+        const btn = document.getElementById("openFull");
+        const isEmbedded = (window.self !== window.top);
+        if (btn && !isEmbedded) btn.style.display = "none";
+      })();
 
+      function norm(s) { return (s || "").trim().toLowerCase(); }
       let tabsInitialized = false;
 
       function setActive(btn) {
@@ -78,56 +105,8 @@
       function filterTo(label) {
         const target = norm(label);
         const sections = document.querySelectorAll(".taplistio-section");
-
-        // If Taplist hasn't rendered yet, do nothing
         if (!sections.length) return false;
 
         sections.forEach(sec => {
-          const headerEl = sec.querySelector(".taplistio-header") || sec.querySelector("h1,h2,h3,h4");
-          const headerText = norm(headerEl ? headerEl.textContent : "");
-          const show = headerText.includes(target);
-          sec.style.display = show ? "" : "none";
-        });
-
-        return true;
-      }
-
-      function initTabsOnce() {
-        if (tabsInitialized) return;
-        tabsInitialized = true;
-
-        document.querySelectorAll(".tab").forEach(btn => {
-          btn.addEventListener("click", () => {
-            setActive(btn);
-            filterTo(btn.dataset.section);
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          });
-        });
-      }
-
-      // Best case: Taplist calls this when data is available
-      window.taplistIo = window.taplistIo || {};
-      window.taplistIo.onDataAvailable = function () {
-        initTabsOnce();
-        // Default view
-        filterTo(document.querySelector(".tab.active")?.dataset.section || "On Tap");
-      };
-
-      // Backup: if callback doesn't fire, poll until Taplist renders
-      (function backupPoll() {
-        let tries = 0;
-        const timer = setInterval(() => {
-          tries++;
-          const ok = filterTo(document.querySelector(".tab.active")?.dataset.section || "On Tap");
-          if (ok) initTabsOnce();
-          if (ok || tries > 60) clearInterval(timer);
-        }, 250);
-      })();
-    </script>
-
-    <script async src="https://taplist.io/embed/embed.js" charset="utf-8"></script>
-
-  </div>
-</body>
-</html>
-
+          const headerEl =
+            sec.querySe
