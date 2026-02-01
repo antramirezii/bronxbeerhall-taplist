@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Bronx Beer Hall Tap List</title>
+  <title>The Bronx Beer Hall Tap List</title>
 
   <!-- Aristotle-like typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,7 +23,7 @@
       --border: rgba(17,24,39,0.22);
       --shadow: rgba(17,24,39,0.12);
 
-      /* Rounded rectangle radius */
+      /* Rounded rectangle like Google Sites buttons */
       --btn-radius: 12px;
 
       --bg: #ffffff;
@@ -159,18 +159,12 @@
       max-width: 70ch;
     }
 
-    /* Mobile behavior (triggered by JS and also by touch-device CSS) */
+    /* Mobile behavior (UA-based only, to avoid touch-laptop false positives) */
     body.is-mobile .mobile-cta,
     body.is-mobile .mobile-note{ display: block; }
 
     body.is-mobile .tabs{ display: none; }
     body.is-mobile .taplist-wrap{ display: none; }
-
-    @media (hover: none) and (pointer: coarse) {
-      .mobile-cta, .mobile-note { display: block; }
-      .tabs { display: none; }
-      .taplist-wrap { display: none; }
-    }
   </style>
 </head>
 
@@ -199,6 +193,7 @@
     <script>
       function norm(s){ return (s || "").trim().toLowerCase(); }
 
+      // UA-only mobile detection (prevents touch laptops from being treated as mobile)
       const isMobileUA = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
       if (isMobileUA) document.body.classList.add("is-mobile");
 
@@ -223,6 +218,7 @@
           if (show) matchCount++;
         });
 
+        // If labels ever change, show all rather than blank
         if (matchCount === 0) sections.forEach(sec => (sec.style.display = ""));
         return true;
       }
