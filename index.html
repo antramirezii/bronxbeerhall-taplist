@@ -3,18 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>The Bronx Beer Hall Tap List</title>
+  <title>Bronx Beer Hall Tap List</title>
 
   <style>
     body { margin: 0; font-family: Arial, sans-serif; background: #ffffff; }
     .wrap { max-width: 980px; margin: 0 auto; padding: 12px 14px; }
 
-    /* Mobile helper button (shows on phones, embedded or not) */
+    /* Helper button (shows on phones). Sticky can cause scroll jank in iframes, so not sticky. */
     .open-full{
       display:none;
-      position: sticky;
-      top: 0;
-      z-index: 9999;
       text-decoration: none;
       font-weight: 800;
       padding: 12px 14px;
@@ -22,9 +19,10 @@
       border: 1px solid rgba(0,0,0,0.18);
       background: #fff;
       margin: 6px 0 12px;
+      text-align: center;
     }
 
-    /* Button row */
+    /* Tabs */
     .tabs {
       display: flex;
       gap: 10px;
@@ -55,145 +53,5 @@
     .taplistio-beverage-details { font-size: 0.92em; opacity: 0.92; margin-top: 6px; }
     .taplistio-beverage-description { margin-top: 8px; max-width: 70ch; }
 
-    /* Mobile: remove clutter + show the helper link */
-    @media (max-width: 650px) {
-      .taplistio-embed { font-size: 16px; }
-      .tab { width: 100%; text-align: center; }
-      .taplistio-tap-illustration { display: none; }
-      .taplistio-beverage-description { display: none; }
-      .taplistio-metric-ibu,
-      .taplistio-metric-srm,
-      .taplistio-metric-temperature { display: none; }
-
-      .open-full { display: block; text-align: center; }
-    }
-
-    /* Optional message if Taplist is slow/blocked */
-    .load-note{
-      display:none;
-      margin-top: 10px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px solid rgba(0,0,0,0.12);
-      background: #fff;
-      font-size: 14px;
-      opacity: 0.9;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="wrap">
-
-    <a class="open-full" href="https://taplist.io/bronxbeerhall" target="_blank" rel="noopener">
-      Open Full Tap List
-    </a>
-
-    <div class="tabs">
-      <button class="tab active" type="button" data-section="On Tap">On Tap</button>
-      <button class="tab" type="button" data-section="Cans & Bottles">Cans & Bottles</button>
-      <button class="tab" type="button" data-section="Wine">Wine</button>
-    </div>
-
-    <div class="load-note" id="loadNote">
-      If the list does not load here, tap “Open Full Tap List.”
-    </div>
-
-    <!-- Taplist embed target -->
-    <div class="taplistio-embed-menu" data-venue="bronxbeerhall"></div>
-
-    <script>
-      function norm(s) { return (s || "").trim().toLowerCase(); }
-
-      function getSections() {
-        return Array.from(document.querySelectorAll(".taplistio-section"));
-      }
-
-      function headersReady(sections) {
-        // Only consider "ready" when each section has real header text
-        return sections.length > 0 && sections.every(sec => {
-          const headerEl =
-            sec.querySelector(".taplistio-header") ||
-            sec.querySelector("h1,h2,h3,h4");
-          const text = headerEl ? headerEl.textContent : "";
-          return norm(text).length > 0;
-        });
-      }
-
-      function applyFilter(label) {
-        const sections = getSections();
-        if (!sections.length) return { ok: false };
-
-        // Do not hide anything until headers exist
-        if (!headersReady(sections)) return { ok: false };
-
-        const target = norm(label);
-        let matchCount = 0;
-
-        sections.forEach(sec => {
-          const headerEl =
-            sec.querySelector(".taplistio-header") ||
-            sec.querySelector("h1,h2,h3,h4");
-          const headerText = norm(headerEl ? headerEl.textContent : "");
-
-          const show = headerText.includes(target);
-          sec.style.display = show ? "" : "none";
-          if (show) matchCount++;
-        });
-
-        // If we did not match anything, show all (better than blank)
-        if (matchCount === 0) {
-          sections.forEach(sec => (sec.style.display = ""));
-        }
-
-        return { ok: true, matched: matchCount };
-      }
-
-      function setActive(btn) {
-        document.querySelectorAll(".tab").forEach(b => b.classList.toggle("active", b === btn));
-      }
-
-      function initTabs() {
-        document.querySelectorAll(".tab").forEach(btn => {
-          btn.addEventListener("click", () => {
-            setActive(btn);
-            applyFilter(btn.dataset.section || "On Tap");
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          });
-        });
-      }
-
-      // Initialize tabs immediately
-      initTabs();
-
-      // Try to filter as soon as Taplist renders
-      (function waitForTaplist() {
-        const active = document.querySelector(".tab.active");
-        const label = active ? active.dataset.section : "On Tap";
-
-        let tries = 0;
-        const timer = setInterval(() => {
-          tries++;
-
-          const result = applyFilter(label);
-          if (result.ok) {
-            clearInterval(timer);
-          }
-
-          // After ~6 seconds, show a helpful message, but keep trying a bit longer
-          if (tries === 24) {
-            const note = document.getElementById("loadNote");
-            if (note) note.style.display = "block";
-          }
-
-          // Stop after ~20 seconds
-          if (tries > 80) clearInterval(timer);
-        }, 250);
-      })();
-    </script>
-
-    <script async src="https://taplist.io/embed/embed.js" charset="utf-8"></script>
-
-  </div>
-</body>
-</html>
+    /* Mobile: simplify */
+    @media (max-
