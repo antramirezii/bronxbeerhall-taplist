@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>The Bronx Beer Hall Tap List</title>
+  <title>Bronx Beer Hall Tap List</title>
 
   <!-- Aristotle-like typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,17 +15,16 @@
       --font-body: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
       --font-display: "Merriweather", Georgia, "Times New Roman", serif;
 
-      /* Orange accent */
       --accent: #f97316;
       --accent-hover: #ea580c;
 
       --ink: #111827;
       --muted: rgba(17,24,39,0.75);
-      --border: rgba(17,24,39,0.16);
+      --border: rgba(17,24,39,0.22);
       --shadow: rgba(17,24,39,0.12);
 
-      /* Pill button shape like Google Sites buttons */
-      --pill: 999px;
+      /* Rounded rectangle radius */
+      --btn-radius: 12px;
 
       --bg: #ffffff;
       --card: #ffffff;
@@ -49,210 +48,9 @@
       display: none;
       text-decoration: none;
       font-family: var(--font-body);
-      font-weight: 700;
+      font-weight: 400; /* not bold */
       padding: 14px 16px;
-      border-radius: var(--pill);
+      border-radius: var(--btn-radius);
       border: 1px solid var(--accent);
       background: var(--accent);
       color: #fff;
-      text-align: center;
-      margin: 6px 0 8px;
-      box-shadow: 0 1px 10px var(--shadow);
-    }
-    .mobile-cta:hover{
-      background: var(--accent-hover);
-      border-color: var(--accent-hover);
-    }
-    .mobile-note{
-      display: none;
-      text-align: center;
-      font-size: 14px;
-      color: var(--muted);
-      margin: 0 0 14px;
-    }
-
-    /* Desktop tabs (sticky) */
-    .tabs{
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-
-      background: var(--bg);
-      padding: 10px 0;
-      margin: 0 0 14px;
-
-      border-bottom: 1px solid rgba(17,24,39,0.10);
-    }
-
-    /* Make these match a Google Sites button look */
-    .tab{
-      font-family: var(--font-body);
-      font-weight: 700;
-      font-size: 15px;
-
-      border-radius: var(--pill);
-      padding: 10px 16px;
-
-      border: 2px solid var(--accent);
-      background: transparent;
-      color: var(--accent);
-
-      cursor: pointer;
-      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.06s ease;
-    }
-    .tab:hover{
-      background: rgba(249, 115, 22, 0.10);
-    }
-    .tab:active{
-      transform: translateY(1px);
-    }
-
-    /* Active button is the filled orange version */
-    .tab.active{
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-      box-shadow: 0 1px 10px var(--shadow);
-    }
-
-    /* Taplist readability */
-    .taplistio-embed{
-      font-family: var(--font-body);
-      font-size: 18px;
-      line-height: 1.35;
-    }
-    .taplistio-header{
-      font-family: var(--font-display);
-      font-size: 1.25em;
-      font-weight: 900;
-      margin: 18px 0 10px;
-    }
-    .taplistio-tap{
-      padding: 14px 0;
-      border-bottom: 1px solid rgba(17,24,39,0.12);
-    }
-    .taplistio-beverage-name{
-      font-family: var(--font-display);
-      font-size: 1.15em;
-      font-weight: 900;
-    }
-    .taplistio-producer{
-      font-size: 0.95em;
-      opacity: 0.85;
-      margin-top: 2px;
-    }
-    .taplistio-beverage-prices{
-      font-weight: 800;
-      margin-top: 6px;
-    }
-    .taplistio-beverage-details{
-      font-size: 0.92em;
-      opacity: 0.92;
-      margin-top: 6px;
-    }
-    .taplistio-beverage-description{
-      margin-top: 8px;
-      max-width: 70ch;
-    }
-
-    /* Mobile behavior (triggered by JS) */
-    body.is-mobile .mobile-cta,
-    body.is-mobile .mobile-note{ display: block; }
-
-    body.is-mobile .tabs{ display: none; }
-    body.is-mobile .taplist-wrap{ display: none; }
-
-    /* Extra reliable mobile rule: touch-first devices */
-    @media (hover: none) and (pointer: coarse) {
-      .mobile-cta, .mobile-note { display: block; }
-      .tabs { display: none; }
-      .taplist-wrap { display: none; }
-    }
-  </style>
-</head>
-
-<body>
-  <div class="wrap">
-
-    <!-- Mobile: only show this -->
-    <a class="mobile-cta" href="https://taplist.io/bronxbeerhall" target="_blank" rel="noopener">
-      View Today&#39;s Tap List
-    </a>
-    <div class="mobile-note">
-      Taplist lets you filter On Tap, Cans &amp; Bottles, and Wine.
-    </div>
-
-    <!-- Desktop: sticky buttons + embedded list -->
-    <div class="tabs">
-      <button class="tab active" type="button" data-section="On Tap">On Tap</button>
-      <button class="tab" type="button" data-section="Cans &amp; Bottles">Cans &amp; Bottles</button>
-      <button class="tab" type="button" data-section="Wine">Wine</button>
-    </div>
-
-    <div class="taplist-wrap">
-      <div class="taplistio-embed-menu taplistio-embed" data-venue="bronxbeerhall"></div>
-    </div>
-
-    <script>
-      function norm(s){ return (s || "").trim().toLowerCase(); }
-
-      // Keep UA check, but do not rely on iframe width
-      const isMobileUA = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-      if (isMobileUA) document.body.classList.add("is-mobile");
-
-      function headersReady(sections){
-        return sections.length > 0 && sections.every(sec => {
-          const headerEl = sec.querySelector(".taplistio-header") || sec.querySelector("h1,h2,h3,h4");
-          return headerEl && norm(headerEl.textContent).length > 0;
-        });
-      }
-
-      function applyFilter(label){
-        const target = norm(label);
-        const sections = Array.from(document.querySelectorAll(".taplistio-section"));
-        if (!headersReady(sections)) return false;
-
-        let matchCount = 0;
-        sections.forEach(sec => {
-          const headerEl = sec.querySelector(".taplistio-header") || sec.querySelector("h1,h2,h3,h4");
-          const headerText = norm(headerEl ? headerEl.textContent : "");
-          const show = headerText.includes(target);
-          sec.style.display = show ? "" : "none";
-          if (show) matchCount++;
-        });
-
-        if (matchCount === 0) sections.forEach(sec => (sec.style.display = ""));
-        return true;
-      }
-
-      function setActive(btn){
-        document.querySelectorAll(".tab").forEach(b => b.classList.toggle("active", b === btn));
-      }
-
-      document.querySelectorAll(".tab").forEach(btn => {
-        btn.addEventListener("click", () => {
-          setActive(btn);
-          applyFilter(btn.dataset.section || "On Tap");
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        });
-      });
-
-      (function waitForTaplist(){
-        let tries = 0;
-        const timer = setInterval(() => {
-          tries++;
-          const ok = applyFilter("On Tap");
-          if (ok || tries > 80) clearInterval(timer);
-        }, 250);
-      })();
-    </script>
-
-    <script async src="https://taplist.io/embed/embed.js" charset="utf-8"></script>
-
-  </div>
-</body>
-</html>
