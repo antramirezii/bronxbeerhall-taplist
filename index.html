@@ -9,20 +9,27 @@
     body { margin: 0; font-family: Arial, sans-serif; background: #ffffff; }
     .wrap { max-width: 980px; margin: 0 auto; padding: 12px 14px; }
 
-    /* Helper button (shows on phones). Sticky can cause scroll jank in iframes, so not sticky. */
-    .open-full{
-      display:none;
+    /* Mobile-only CTA */
+    .mobile-cta {
+      display: none;
       text-decoration: none;
       font-weight: 800;
-      padding: 12px 14px;
-      border-radius: 12px;
+      padding: 14px 16px;
+      border-radius: 14px;
       border: 1px solid rgba(0,0,0,0.18);
       background: #fff;
-      margin: 6px 0 12px;
       text-align: center;
+      margin: 6px 0 12px;
+    }
+    .mobile-note {
+      display: none;
+      text-align: center;
+      font-size: 14px;
+      opacity: 0.85;
+      margin: 0 0 14px;
     }
 
-    /* Tabs */
+    /* Desktop tabs */
     .tabs {
       display: flex;
       gap: 10px;
@@ -53,5 +60,112 @@
     .taplistio-beverage-details { font-size: 0.92em; opacity: 0.92; margin-top: 6px; }
     .taplistio-beverage-description { margin-top: 8px; max-width: 70ch; }
 
-    /* Mobile: simplify */
-    @media (max-
+    /* If JS decides it's mobile, show only button and hide the embed */
+    body.is-mobile .mobile-cta,
+    body.is-mobile .mobile-note { display: block; }
+
+    body.is-mobile .tabs { display: none; }
+    body.is-mobile .taplist-wrap { display: none; }
+
+    /* Fallback if JS fails: treat small screens as mobile */
+    @media (max-width: 650px) {
+      .mobile-cta, .mobile-note { display: block; }
+      .tabs { display: none; }
+      .taplist-wrap { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <!-- Mobile: send people to Taplist directly (best scrolling + built-in filtering) -->
+    <a class="mobile-cta" href="https://taplist.io/bronxbeerhall" target="_blank" rel="noopener">
+      Open Tap List
+    </a>
+    <div class="mobile-note">
+      Use Taplist filters to view On Tap, Cans & Bottles, and Wine.
+    </div>
+
+    <!-- Desktop: keep the nice embedded list with section buttons -->
+    <div class="tabs">
+      <button class="tab active" type="button" data-section="On Tap">On Tap</button>
+      <button class="tab" type="button" data-section="Cans &amp; Bottles">Cans &amp; Bottles</button>
+      <button class="tab" type="button" data-section="Wine">Wine</button>
+    </div>
+
+    <div class="taplist-wrap">
+      <div class="taplistio-embed-menu taplistio-embed" data-venue="bronxbeerhall"></div>
+    </div>
+
+    <script>
+      function norm(s) { return (s || "").trim().toLowerCase(); }
+
+      // More reliable mobile detection inside Google Sites embeds
+      const isMobileUA = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const isSmall = window.matchMedia && window.matchMedia("(max-width: 650px)").matches;
+      const isMobile = isMobileUA || isSmall;
+
+      if (isMobile) {
+        document.body.classList.add("is-mobile");
+      } else {
+        // Load Taplist only on desktop
+        const s = document.createElement("script");
+        s.async = true;
+        s.src = "https://taplist.io/embed/embed.js";
+        s.charset = "utf-8";
+        document.body.appendChild(s);
+
+        function headersReady(sections) {
+          return sections.length > 0 && sections.every(sec => {
+            const headerEl = sec.querySelector(".taplistio-header") || sec.querySelector("h1,h2,h3,h4");
+            return headerEl && norm(headerEl.textContent).length > 0;
+          });
+        }
+
+        function applyFilter(label) {
+          const target = norm(label);
+          const sections = Array.from(document.querySelectorAll(".taplistio-section"));
+          if (!headersReady(sections)) return false;
+
+          let matchCount = 0;
+          sections.forEach(sec => {
+            const headerEl = sec.querySelector(".taplistio-header") || sec.querySelector("h1,h2,h3,h4");
+            const headerText = norm(headerEl ? headerEl.textContent : "");
+            const show = headerText.includes(target);
+            sec.style.display = show ? "" : "none";
+            if (show) matchCount++;
+          });
+
+          // If labels change, show all instead of blank
+          if (matchCount === 0) sections.forEach(sec => (sec.style.display = ""));
+          return true;
+        }
+
+        function setActive(btn) {
+          document.querySelectorAll(".tab").forEach(b => b.classList.toggle("active", b === btn));
+        }
+
+        document.querySelectorAll(".tab").forEach(btn => {
+          btn.addEventListener("click", () => {
+            setActive(btn);
+            applyFilter(btn.dataset.section || "On Tap");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          });
+        });
+
+        // Default to On Tap once Taplist renders
+        (function waitForTaplist() {
+          let tries = 0;
+          const timer = setInterval(() => {
+            tries++;
+            const ok = applyFilter("On Tap");
+            if (ok || tries > 80) clearInterval(timer);
+          }, 250);
+        })();
+      }
+    </script>
+
+  </div>
+</body>
+</html>
