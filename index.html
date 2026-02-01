@@ -15,7 +15,7 @@
       --font-body: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
       --font-display: "Merriweather", Georgia, "Times New Roman", serif;
 
-      /* Orange accent for active button */
+      /* Orange accent */
       --accent: #f97316;
       --accent-hover: #ea580c;
 
@@ -23,9 +23,12 @@
       --muted: rgba(17,24,39,0.75);
       --border: rgba(17,24,39,0.16);
       --shadow: rgba(17,24,39,0.12);
-      --radius: 16px;
-      --card: #ffffff;
+
+      /* Pill button shape like Google Sites buttons */
+      --pill: 999px;
+
       --bg: #ffffff;
+      --card: #ffffff;
     }
 
     body{
@@ -45,11 +48,10 @@
     .mobile-cta{
       display: none;
       text-decoration: none;
-      font-family: var(--font-display);
-      font-weight: 900;
-      letter-spacing: 0.2px;
+      font-family: var(--font-body);
+      font-weight: 700;
       padding: 14px 16px;
-      border-radius: var(--radius);
+      border-radius: var(--pill);
       border: 1px solid var(--accent);
       background: var(--accent);
       color: #fff;
@@ -81,37 +83,40 @@
 
       background: var(--bg);
       padding: 10px 0;
-
       margin: 0 0 14px;
+
       border-bottom: 1px solid rgba(17,24,39,0.10);
     }
 
+    /* Make these match a Google Sites button look */
     .tab{
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--ink);
-      padding: 10px 14px;
-      border-radius: var(--radius);
-      font-family: var(--font-display);
-      font-weight: 900;
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 15px;
+
+      border-radius: var(--pill);
+      padding: 10px 16px;
+
+      border: 2px solid var(--accent);
+      background: transparent;
+      color: var(--accent);
+
       cursor: pointer;
-      font-size: 16px;
-      box-shadow: 0 1px 8px rgba(0,0,0,0.05);
-      transition: transform 0.06s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.06s ease;
     }
     .tab:hover{
-      border-color: rgba(17,24,39,0.35);
+      background: rgba(249, 115, 22, 0.10);
     }
     .tab:active{
       transform: translateY(1px);
     }
 
-    /* Active button is orange */
+    /* Active button is the filled orange version */
     .tab.active{
       background: var(--accent);
       color: #fff;
       border-color: var(--accent);
-      box-shadow: 0 1px 12px var(--shadow);
+      box-shadow: 0 1px 10px var(--shadow);
     }
 
     /* Taplist readability */
@@ -154,19 +159,26 @@
       max-width: 70ch;
     }
 
-    /* Mobile behavior: show CTA, hide tabs + embedded list */
+    /* Mobile behavior (triggered by JS) */
     body.is-mobile .mobile-cta,
     body.is-mobile .mobile-note{ display: block; }
 
     body.is-mobile .tabs{ display: none; }
     body.is-mobile .taplist-wrap{ display: none; }
+
+    /* Extra reliable mobile rule: touch-first devices */
+    @media (hover: none) and (pointer: coarse) {
+      .mobile-cta, .mobile-note { display: block; }
+      .tabs { display: none; }
+      .taplist-wrap { display: none; }
+    }
   </style>
 </head>
 
 <body>
   <div class="wrap">
 
-    <!-- Mobile: open Taplist directly -->
+    <!-- Mobile: only show this -->
     <a class="mobile-cta" href="https://taplist.io/bronxbeerhall" target="_blank" rel="noopener">
       View Today&#39;s Tap List
     </a>
@@ -174,7 +186,7 @@
       Taplist lets you filter On Tap, Cans &amp; Bottles, and Wine.
     </div>
 
-    <!-- Desktop: embedded list + sticky section buttons -->
+    <!-- Desktop: sticky buttons + embedded list -->
     <div class="tabs">
       <button class="tab active" type="button" data-section="On Tap">On Tap</button>
       <button class="tab" type="button" data-section="Cans &amp; Bottles">Cans &amp; Bottles</button>
@@ -188,7 +200,7 @@
     <script>
       function norm(s){ return (s || "").trim().toLowerCase(); }
 
-      // Mobile detection by user-agent so Google Sites iframe width does not break desktop
+      // Keep UA check, but do not rely on iframe width
       const isMobileUA = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
       if (isMobileUA) document.body.classList.add("is-mobile");
 
@@ -229,7 +241,6 @@
         });
       });
 
-      // Wait for Taplist to render then default to On Tap
       (function waitForTaplist(){
         let tries = 0;
         const timer = setInterval(() => {
@@ -240,7 +251,6 @@
       })();
     </script>
 
-    <!-- Taplist embed -->
     <script async src="https://taplist.io/embed/embed.js" charset="utf-8"></script>
 
   </div>
