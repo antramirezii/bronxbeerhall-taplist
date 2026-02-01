@@ -5,82 +5,160 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Bronx Beer Hall Tap List</title>
 
+  <!-- Aristotle-like typography (Merriweather + Roboto) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
   <style>
-    body { margin: 0; font-family: Arial, sans-serif; background: #ffffff; }
-    .wrap { max-width: 980px; margin: 0 auto; padding: 12px 14px; }
+    :root{
+      /* Aristotle vibe: classic type + orange accent */
+      --font-body: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      --font-display: "Merriweather", Georgia, "Times New Roman", serif;
+
+      /* Orange accent (adjust if you want it more/less bright) */
+      --accent: #f59e0b;
+      --accent-hover: #d97706;
+
+      --ink: #111827;
+      --muted: rgba(17,24,39,0.75);
+      --border: rgba(17,24,39,0.16);
+      --shadow: rgba(17,24,39,0.12);
+      --radius: 16px;
+      --card: #ffffff;
+      --bg: #ffffff;
+    }
+
+    body{
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+    }
+
+    .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 12px 14px;
+    }
 
     /* Mobile-only CTA */
-    .mobile-cta {
+    .mobile-cta{
       display: none;
       text-decoration: none;
-      font-weight: 800;
+      font-family: var(--font-display);
+      font-weight: 900;
+      letter-spacing: 0.2px;
       padding: 14px 16px;
-      border-radius: 14px;
-      border: 1px solid rgba(0,0,0,0.18);
-      background: #fff;
+      border-radius: var(--radius);
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: #fff;
       text-align: center;
-      margin: 6px 0 10px;
+      margin: 6px 0 8px;
+      box-shadow: 0 1px 10px var(--shadow);
     }
-    .mobile-note {
+    .mobile-cta:hover{ background: var(--accent-hover); border-color: var(--accent-hover); }
+    .mobile-note{
       display: none;
       text-align: center;
       font-size: 14px;
-      opacity: 0.85;
+      color: var(--muted);
       margin: 0 0 14px;
     }
 
     /* Desktop tabs */
-    .tabs {
+    .tabs{
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
       margin: 8px 0 14px;
     }
-    .tab {
-      border: 1px solid rgba(0,0,0,0.18);
-      background: #fff;
-      padding: 10px 12px;
-      border-radius: 12px;
-      font-weight: 800;
+
+    .tab{
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--ink);
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      font-family: var(--font-display);
+      font-weight: 900;
       cursor: pointer;
       font-size: 16px;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+      transition: transform 0.06s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
     }
-    .tab.active {
-      border-color: rgba(0,0,0,0.55);
-      box-shadow: 0 1px 6px rgba(0,0,0,0.10);
+    .tab:hover{ border-color: rgba(17,24,39,0.35); }
+    .tab:active{ transform: translateY(1px); }
+
+    .tab.active{
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      box-shadow: 0 1px 12px var(--shadow);
     }
 
-    /* Taplist readability */
-    .taplistio-embed { font-size: 18px; line-height: 1.35; }
-    .taplistio-header { font-size: 1.25em; font-weight: 800; margin: 18px 0 10px; }
-    .taplistio-tap { padding: 14px 0; border-bottom: 1px solid rgba(0,0,0,0.12); }
-    .taplistio-beverage-name { font-size: 1.15em; font-weight: 800; }
-    .taplistio-producer { font-size: 0.95em; opacity: 0.85; margin-top: 2px; }
-    .taplistio-beverage-prices { font-weight: 800; margin-top: 6px; }
-    .taplistio-beverage-details { font-size: 0.92em; opacity: 0.92; margin-top: 6px; }
-    .taplistio-beverage-description { margin-top: 8px; max-width: 70ch; }
+    /* Taplist readability + theme-ish typography */
+    .taplistio-embed{
+      font-family: var(--font-body);
+      font-size: 18px;
+      line-height: 1.35;
+    }
+    .taplistio-header{
+      font-family: var(--font-display);
+      font-size: 1.25em;
+      font-weight: 900;
+      margin: 18px 0 10px;
+    }
+    .taplistio-tap{
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(17,24,39,0.12);
+    }
+    .taplistio-beverage-name{
+      font-family: var(--font-display);
+      font-size: 1.15em;
+      font-weight: 900;
+    }
+    .taplistio-producer{
+      font-size: 0.95em;
+      opacity: 0.85;
+      margin-top: 2px;
+    }
+    .taplistio-beverage-prices{
+      font-weight: 800;
+      margin-top: 6px;
+    }
+    .taplistio-beverage-details{
+      font-size: 0.92em;
+      opacity: 0.92;
+      margin-top: 6px;
+    }
+    .taplistio-beverage-description{
+      margin-top: 8px;
+      max-width: 70ch;
+    }
 
-    /* Only hide the embed on REAL mobile devices (we add .is-mobile via JS) */
+    /* Mobile: hide embed, show CTA (we add .is-mobile via JS) */
     body.is-mobile .mobile-cta,
-    body.is-mobile .mobile-note { display: block; }
+    body.is-mobile .mobile-note{ display: block; }
 
-    body.is-mobile .tabs { display: none; }
-    body.is-mobile .taplist-wrap { display: none; }
+    body.is-mobile .tabs{ display: none; }
+    body.is-mobile .taplist-wrap{ display: none; }
   </style>
 </head>
 
 <body>
   <div class="wrap">
 
-    <!-- Mobile: send people to Taplist directly (best scrolling + built-in filtering) -->
+    <!-- Mobile: open Taplist directly -->
     <a class="mobile-cta" href="https://taplist.io/bronxbeerhall" target="_blank" rel="noopener">
       Open Tap List
     </a>
     <div class="mobile-note">
-      Taplist lets you filter On Tap, Cans &amp; Bottles, and Wine.
+      Use Taplist filters to view On Tap, Cans &amp; Bottles, and Wine.
     </div>
 
-    <!-- Desktop: embedded list with section buttons -->
+    <!-- Desktop: embedded list + section buttons -->
     <div class="tabs">
       <button class="tab active" type="button" data-section="On Tap">On Tap</button>
       <button class="tab" type="button" data-section="Cans &amp; Bottles">Cans &amp; Bottles</button>
@@ -92,23 +170,20 @@
     </div>
 
     <script>
-      function norm(s) { return (s || "").trim().toLowerCase(); }
+      function norm(s){ return (s || "").trim().toLowerCase(); }
 
-      // Mobile detection: user-agent only (avoids Google Sites iframe width false-positives)
+      // Detect real mobile devices by UA so Google Sites iframe width does not break desktop
       const isMobileUA = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      if (isMobileUA) document.body.classList.add("is-mobile");
 
-      if (isMobileUA) {
-        document.body.classList.add("is-mobile");
-      }
-
-      function headersReady(sections) {
+      function headersReady(sections){
         return sections.length > 0 && sections.every(sec => {
           const headerEl = sec.querySelector(".taplistio-header") || sec.querySelector("h1,h2,h3,h4");
           return headerEl && norm(headerEl.textContent).length > 0;
         });
       }
 
-      function applyFilter(label) {
+      function applyFilter(label){
         const target = norm(label);
         const sections = Array.from(document.querySelectorAll(".taplistio-section"));
         if (!headersReady(sections)) return false;
@@ -122,16 +197,14 @@
           if (show) matchCount++;
         });
 
-        // If labels change, show all rather than blank
         if (matchCount === 0) sections.forEach(sec => (sec.style.display = ""));
         return true;
       }
 
-      function setActive(btn) {
+      function setActive(btn){
         document.querySelectorAll(".tab").forEach(b => b.classList.toggle("active", b === btn));
       }
 
-      // Tabs filtering only matters on desktop, but harmless if the embed is hidden
       document.querySelectorAll(".tab").forEach(btn => {
         btn.addEventListener("click", () => {
           setActive(btn);
@@ -140,8 +213,8 @@
         });
       });
 
-      // Wait for Taplist to render, then default to On Tap
-      (function waitForTaplist() {
+      // Wait for Taplist to render then default to On Tap
+      (function waitForTaplist(){
         let tries = 0;
         const timer = setInterval(() => {
           tries++;
@@ -151,7 +224,7 @@
       })();
     </script>
 
-    <!-- Taplist script (loads on all devices; mobile embed is hidden anyway) -->
+    <!-- Taplist embed -->
     <script async src="https://taplist.io/embed/embed.js" charset="utf-8"></script>
 
   </div>
