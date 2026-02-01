@@ -9,9 +9,9 @@
     body { margin: 0; font-family: Arial, sans-serif; background: #ffffff; }
     .wrap { max-width: 980px; margin: 0 auto; padding: 12px 14px; }
 
-    /* Mobile helper button: only useful when embedded on a phone */
+    /* Mobile helper button (shows on phones, embedded or not) */
     .open-full{
-      display:none; /* hidden by default */
+      display:none;
       position: sticky;
       top: 0;
       z-index: 9999;
@@ -45,7 +45,7 @@
       box-shadow: 0 1px 6px rgba(0,0,0,0.10);
     }
 
-    /* Make Taplist bigger and easier to scan */
+    /* Taplist readability */
     .taplistio-embed { font-size: 18px; line-height: 1.35; }
     .taplistio-header { font-size: 1.25em; font-weight: 800; margin: 18px 0 10px; }
     .taplistio-tap { padding: 14px 0; border-bottom: 1px solid rgba(0,0,0,0.12); }
@@ -55,7 +55,7 @@
     .taplistio-beverage-details { font-size: 0.92em; opacity: 0.92; margin-top: 6px; }
     .taplistio-beverage-description { margin-top: 8px; max-width: 70ch; }
 
-    /* Mobile: remove clutter + show "Open Full Tap List" button */
+    /* Mobile: remove clutter + show the helper link */
     @media (max-width: 650px) {
       .taplistio-embed { font-size: 16px; }
       .tab { width: 100%; text-align: center; }
@@ -67,46 +67,133 @@
 
       .open-full { display: block; text-align: center; }
     }
+
+    /* Optional message if Taplist is slow/blocked */
+    .load-note{
+      display:none;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,0.12);
+      background: #fff;
+      font-size: 14px;
+      opacity: 0.9;
+    }
   </style>
 </head>
 
 <body>
   <div class="wrap">
 
-    <!-- This button is shown on mobile, but ONLY when embedded (Google Sites iframe) -->
-    <a class="open-full" id="openFull" href="https://taplist.io/bronxbeerhall" target="_blank" rel="noopener">
+    <a class="open-full" href="https://taplist.io/bronxbeerhall" target="_blank" rel="noopener">
       Open Full Tap List
     </a>
 
     <div class="tabs">
       <button class="tab active" type="button" data-section="On Tap">On Tap</button>
-      <button class="tab" type="button" data-section="Cans &amp; Bottles">Cans &amp; Bottles</button>
+      <button class="tab" type="button" data-section="Cans & Bottles">Cans & Bottles</button>
       <button class="tab" type="button" data-section="Wine">Wine</button>
     </div>
 
-    <!-- Taplist embed -->
+    <div class="load-note" id="loadNote">
+      If the list does not load here, tap “Open Full Tap List.”
+    </div>
+
+    <!-- Taplist embed target -->
     <div class="taplistio-embed-menu" data-venue="bronxbeerhall"></div>
 
     <script>
-      // Only show the "Open Full Tap List" helper when this page is EMBEDDED (e.g., inside Google Sites).
-      (function () {
-        const btn = document.getElementById("openFull");
-        const isEmbedded = (window.self !== window.top);
-        if (btn && !isEmbedded) btn.style.display = "none";
-      })();
-
       function norm(s) { return (s || "").trim().toLowerCase(); }
-      let tabsInitialized = false;
+
+      function getSections() {
+        return Array.from(document.querySelectorAll(".taplistio-section"));
+      }
+
+      function headersReady(sections) {
+        // Only consider "ready" when each section has real header text
+        return sections.length > 0 && sections.every(sec => {
+          const headerEl =
+            sec.querySelector(".taplistio-header") ||
+            sec.querySelector("h1,h2,h3,h4");
+          const text = headerEl ? headerEl.textContent : "";
+          return norm(text).length > 0;
+        });
+      }
+
+      function applyFilter(label) {
+        const sections = getSections();
+        if (!sections.length) return { ok: false };
+
+        // Do not hide anything until headers exist
+        if (!headersReady(sections)) return { ok: false };
+
+        const target = norm(label);
+        let matchCount = 0;
+
+        sections.forEach(sec => {
+          const headerEl =
+            sec.querySelector(".taplistio-header") ||
+            sec.querySelector("h1,h2,h3,h4");
+          const headerText = norm(headerEl ? headerEl.textContent : "");
+
+          const show = headerText.includes(target);
+          sec.style.display = show ? "" : "none";
+          if (show) matchCount++;
+        });
+
+        // If we did not match anything, show all (better than blank)
+        if (matchCount === 0) {
+          sections.forEach(sec => (sec.style.display = ""));
+        }
+
+        return { ok: true, matched: matchCount };
+      }
 
       function setActive(btn) {
         document.querySelectorAll(".tab").forEach(b => b.classList.toggle("active", b === btn));
       }
 
-      function filterTo(label) {
-        const target = norm(label);
-        const sections = document.querySelectorAll(".taplistio-section");
-        if (!sections.length) return false;
+      function initTabs() {
+        document.querySelectorAll(".tab").forEach(btn => {
+          btn.addEventListener("click", () => {
+            setActive(btn);
+            applyFilter(btn.dataset.section || "On Tap");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          });
+        });
+      }
 
-        sections.forEach(sec => {
-          const headerEl =
-            sec.querySe
+      // Initialize tabs immediately
+      initTabs();
+
+      // Try to filter as soon as Taplist renders
+      (function waitForTaplist() {
+        const active = document.querySelector(".tab.active");
+        const label = active ? active.dataset.section : "On Tap";
+
+        let tries = 0;
+        const timer = setInterval(() => {
+          tries++;
+
+          const result = applyFilter(label);
+          if (result.ok) {
+            clearInterval(timer);
+          }
+
+          // After ~6 seconds, show a helpful message, but keep trying a bit longer
+          if (tries === 24) {
+            const note = document.getElementById("loadNote");
+            if (note) note.style.display = "block";
+          }
+
+          // Stop after ~20 seconds
+          if (tries > 80) clearInterval(timer);
+        }, 250);
+      })();
+    </script>
+
+    <script async src="https://taplist.io/embed/embed.js" charset="utf-8"></script>
+
+  </div>
+</body>
+</html>
