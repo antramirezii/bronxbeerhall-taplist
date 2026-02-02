@@ -19,8 +19,8 @@
       --accent: #f69221;
       --accent-hover: #e3801d;
 
-      --ink: #111111; /* black text */
-      --muted: rgba(17,17,17,0.70);
+      /* Keep text black always */
+      --ink: #111111;
 
       /* Thin black stroke around buttons */
       --stroke: #111111;
@@ -35,6 +35,7 @@
 
       --bg: #ffffff;
       --card: #ffffff;
+      --muted: rgba(17,17,17,0.70);
     }
 
     body{
@@ -67,21 +68,23 @@
       border-bottom: 1px solid rgba(17,17,17,0.10);
     }
 
-    /* Desktop buttons: rounded rectangle, black text, thin black stroke */
+    /* Desktop buttons: black text, not bold, thin black stroke */
     .tab{
       font-family: var(--font-body);
-      font-weight: 400;            /* not bold */
+      font-weight: 400;
       font-size: 15px;
-      color: var(--ink);           /* ALWAYS black text */
+
+      color: var(--ink) !important;
 
       border-radius: var(--btn-radius);
       padding: 10px 16px;
 
-      border: 1px solid var(--stroke);  /* thin black stroke */
+      border: 1px solid var(--stroke);
       background: var(--card);
 
       cursor: pointer;
       box-shadow: var(--shadow-base);
+
       transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.06s ease;
     }
 
@@ -89,27 +92,30 @@
       background: rgba(246, 146, 33, 0.10);
       box-shadow: var(--shadow-hover);
       transform: translateY(-1px);
+      color: var(--ink) !important;
     }
 
     .tab:active{
       transform: translateY(0px);
+      color: var(--ink) !important;
     }
 
-    /* Active = orange background BUT text remains black */
+    /* Active: orange background but BLACK text */
     .tab.active{
       background: var(--accent);
-      color: var(--ink);                /* keep black */
-      border: 1px solid var(--stroke);  /* keep thin black stroke */
+      color: var(--ink) !important;
+      border: 1px solid var(--stroke);
       box-shadow: var(--shadow-active);
     }
 
     .tab.active:hover{
       background: var(--accent-hover);
+      color: var(--ink) !important;
       box-shadow: var(--shadow-hover);
       transform: translateY(-1px);
     }
 
-    /* Mobile CTA: matches active style, with black text + black stroke */
+    /* Mobile CTA: matches active style (orange background, black text, black stroke) */
     .mobile-cta{
       display: none;
       text-decoration: none;
@@ -122,8 +128,8 @@
       padding: 10px 16px;
 
       background: var(--accent);
-      color: var(--ink);                /* ALWAYS black */
-      border: 1px solid var(--stroke);  /* thin black stroke */
+      color: var(--ink) !important;
+      border: 1px solid var(--stroke);
       box-shadow: var(--shadow-active);
 
       text-align: center;
@@ -134,12 +140,14 @@
 
     .mobile-cta:hover{
       background: var(--accent-hover);
+      color: var(--ink) !important;
       box-shadow: var(--shadow-hover);
       transform: translateY(-1px);
     }
 
     .mobile-cta:active{
       transform: translateY(0px);
+      color: var(--ink) !important;
     }
 
     .mobile-note{
