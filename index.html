@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>The Bronx Beer Hall Tap List</title>
 
-  <!-- Aristotle-like typography -->
+  <!-- Fonts similar to your Google Sites theme -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -15,16 +15,22 @@
       --font-body: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
       --font-display: "Merriweather", Georgia, "Times New Roman", serif;
 
-      --accent: #f97316;
-      --accent-hover: #ea580c;
+      /* Your exact orange */
+      --accent: #f69221;
+      /* Slightly darker hover (keeps it consistent with Sites button hover) */
+      --accent-hover: #e3801d;
 
       --ink: #111827;
       --muted: rgba(17,24,39,0.75);
       --border: rgba(17,24,39,0.22);
-      --shadow: rgba(17,24,39,0.12);
 
-      /* Rounded rectangle radius */
+      /* Rounded rectangle (not pill) */
       --btn-radius: 12px;
+
+      /* Shadows (hover is “steeper/stronger”) */
+      --shadow-base: 0 1px 2px rgba(0,0,0,0.08);
+      --shadow-active: 0 6px 14px rgba(0,0,0,0.20);
+      --shadow-hover: 0 14px 26px rgba(0,0,0,0.22), 0 6px 10px rgba(0,0,0,0.16);
 
       --bg: #ffffff;
       --card: #ffffff;
@@ -60,65 +66,82 @@
       border-bottom: 1px solid rgba(17,24,39,0.10);
     }
 
-    /* Desktop buttons */
+    /* Desktop buttons: rounded rectangle, black text, not bold */
     .tab{
       font-family: var(--font-body);
-      font-weight: 400;
+      font-weight: 400;            /* not bold */
       font-size: 15px;
+      color: var(--ink);           /* black text */
 
       border-radius: var(--btn-radius);
       padding: 10px 16px;
 
       border: 1px solid var(--border);
       background: var(--card);
-      color: var(--ink);
 
       cursor: pointer;
-      transition: background 0.15s ease, border-color 0.15s ease, transform 0.06s ease;
+      box-shadow: var(--shadow-base);
+      transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.06s ease;
     }
+
     .tab:hover{
       border-color: rgba(17,24,39,0.35);
-      background: rgba(249, 115, 22, 0.08);
-    }
-    .tab:active{
-      transform: translateY(1px);
+      background: rgba(246, 146, 33, 0.10);
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-1px);
     }
 
+    .tab:active{
+      transform: translateY(0px);
+    }
+
+    /* Active = orange */
     .tab.active{
       background: var(--accent);
-      color: #fff;
+      color: #ffffff;              /* keeps contrast strong on orange */
       border-color: var(--accent);
-      box-shadow: 0 1px 10px var(--shadow);
+      box-shadow: var(--shadow-active);
     }
 
-    /* Mobile CTA matches the desktop ACTIVE button exactly */
+    .tab.active:hover{
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Mobile CTA: show only on mobile */
     .mobile-cta{
       display: none;
       text-decoration: none;
 
       font-family: var(--font-body);
-      font-weight: 400;
+      font-weight: 400;            /* not bold */
       font-size: 15px;
 
       border-radius: var(--btn-radius);
       padding: 10px 16px;
 
       background: var(--accent);
-      color: #111827;
+      color: var(--ink);           /* black text (your request) */
       border: 1px solid var(--accent);
-      box-shadow: 0 1px 10px var(--shadow);
+      box-shadow: var(--shadow-active);
 
       text-align: center;
       margin: 6px 0 8px;
 
-      transition: background 0.15s ease, border-color 0.15s ease, transform 0.06s ease;
+      transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.06s ease;
     }
+
     .mobile-cta:hover{
       background: var(--accent-hover);
       border-color: var(--accent-hover);
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-1px);
     }
+
     .mobile-cta:active{
-      transform: translateY(1px);
+      transform: translateY(0px);
     }
 
     .mobile-note{
@@ -169,7 +192,7 @@
       max-width: 70ch;
     }
 
-    /* Mobile behavior (UA-based only) */
+    /* Mobile behavior (UA-only to avoid touch-laptop false positives) */
     body.is-mobile .mobile-cta,
     body.is-mobile .mobile-note{ display: block; }
 
@@ -228,6 +251,7 @@
           if (show) matchCount++;
         });
 
+        // If labels change, show all rather than blank
         if (matchCount === 0) sections.forEach(sec => (sec.style.display = ""));
         return true;
       }
@@ -244,6 +268,7 @@
         });
       });
 
+      // Wait for Taplist to render then default to On Tap
       (function waitForTaplist(){
         let tries = 0;
         const timer = setInterval(() => {
