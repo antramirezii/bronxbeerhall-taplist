@@ -23,7 +23,7 @@
       --border: rgba(17,24,39,0.22);
       --shadow: rgba(17,24,39,0.12);
 
-      /* Rounded rectangle like Google Sites buttons */
+      /* Rounded rectangle radius */
       --btn-radius: 12px;
 
       --bg: #ffffff;
@@ -43,33 +43,6 @@
       padding: 12px 14px;
     }
 
-    /* Mobile-only CTA */
-    .mobile-cta{
-      display: none;
-      text-decoration: none;
-      font-family: var(--font-body);
-      font-weight: 400; /* not bold */
-      padding: 14px 16px;
-      border-radius: var(--btn-radius);
-      border: 1px solid var(--accent);
-      background: var(--accent);
-      color: #fff;
-      text-align: center;
-      margin: 6px 0 8px;
-      box-shadow: 0 1px 10px var(--shadow);
-    }
-    .mobile-cta:hover{
-      background: var(--accent-hover);
-      border-color: var(--accent-hover);
-    }
-    .mobile-note{
-      display: none;
-      text-align: center;
-      font-size: 14px;
-      color: var(--muted);
-      margin: 0 0 14px;
-    }
-
     /* Desktop tabs (sticky) */
     .tabs{
       position: sticky;
@@ -87,10 +60,10 @@
       border-bottom: 1px solid rgba(17,24,39,0.10);
     }
 
-    /* Rounded rectangle, black text, not bold */
+    /* Desktop buttons */
     .tab{
       font-family: var(--font-body);
-      font-weight: 400; /* not bold */
+      font-weight: 400;
       font-size: 15px;
 
       border-radius: var(--btn-radius);
@@ -111,12 +84,49 @@
       transform: translateY(1px);
     }
 
-    /* Active button stays orange */
     .tab.active{
       background: var(--accent);
       color: #fff;
       border-color: var(--accent);
       box-shadow: 0 1px 10px var(--shadow);
+    }
+
+    /* Mobile CTA matches the desktop ACTIVE button exactly */
+    .mobile-cta{
+      display: none;
+      text-decoration: none;
+
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-size: 15px;
+
+      border-radius: var(--btn-radius);
+      padding: 10px 16px;
+
+      background: var(--accent);
+      color: #fff;
+      border: 1px solid var(--accent);
+      box-shadow: 0 1px 10px var(--shadow);
+
+      text-align: center;
+      margin: 6px 0 8px;
+
+      transition: background 0.15s ease, border-color 0.15s ease, transform 0.06s ease;
+    }
+    .mobile-cta:hover{
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+    .mobile-cta:active{
+      transform: translateY(1px);
+    }
+
+    .mobile-note{
+      display: none;
+      text-align: center;
+      font-size: 14px;
+      color: var(--muted);
+      margin: 0 0 14px;
     }
 
     /* Taplist readability */
@@ -159,7 +169,7 @@
       max-width: 70ch;
     }
 
-    /* Mobile behavior (UA-based only, to avoid touch-laptop false positives) */
+    /* Mobile behavior (UA-based only) */
     body.is-mobile .mobile-cta,
     body.is-mobile .mobile-note{ display: block; }
 
@@ -193,7 +203,7 @@
     <script>
       function norm(s){ return (s || "").trim().toLowerCase(); }
 
-      // UA-only mobile detection (prevents touch laptops from being treated as mobile)
+      // UA-only mobile detection
       const isMobileUA = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
       if (isMobileUA) document.body.classList.add("is-mobile");
 
@@ -218,7 +228,6 @@
           if (show) matchCount++;
         });
 
-        // If labels ever change, show all rather than blank
         if (matchCount === 0) sections.forEach(sec => (sec.style.display = ""));
         return true;
       }
