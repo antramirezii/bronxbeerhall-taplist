@@ -17,12 +17,13 @@
 
       /* Your exact orange */
       --accent: #f69221;
-      /* Slightly darker hover (keeps it consistent with Sites button hover) */
       --accent-hover: #e3801d;
 
-      --ink: #111827;
-      --muted: rgba(17,24,39,0.75);
-      --border: rgba(17,24,39,0.22);
+      --ink: #111111; /* black text */
+      --muted: rgba(17,17,17,0.70);
+
+      /* Thin black stroke around buttons */
+      --stroke: #111111;
 
       /* Rounded rectangle (not pill) */
       --btn-radius: 12px;
@@ -63,29 +64,28 @@
       padding: 10px 0;
       margin: 0 0 14px;
 
-      border-bottom: 1px solid rgba(17,24,39,0.10);
+      border-bottom: 1px solid rgba(17,17,17,0.10);
     }
 
-    /* Desktop buttons: rounded rectangle, black text, not bold */
+    /* Desktop buttons: rounded rectangle, black text, thin black stroke */
     .tab{
       font-family: var(--font-body);
       font-weight: 400;            /* not bold */
       font-size: 15px;
-      color: var(--ink);           /* black text */
+      color: var(--ink);           /* ALWAYS black text */
 
       border-radius: var(--btn-radius);
       padding: 10px 16px;
 
-      border: 1px solid var(--border);
+      border: 1px solid var(--stroke);  /* thin black stroke */
       background: var(--card);
 
       cursor: pointer;
       box-shadow: var(--shadow-base);
-      transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.06s ease;
+      transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.06s ease;
     }
 
     .tab:hover{
-      border-color: rgba(17,24,39,0.35);
       background: rgba(246, 146, 33, 0.10);
       box-shadow: var(--shadow-hover);
       transform: translateY(-1px);
@@ -95,47 +95,45 @@
       transform: translateY(0px);
     }
 
-    /* Active = orange */
+    /* Active = orange background BUT text remains black */
     .tab.active{
       background: var(--accent);
-      color: #ffffff;              /* keeps contrast strong on orange */
-      border-color: var(--accent);
+      color: var(--ink);                /* keep black */
+      border: 1px solid var(--stroke);  /* keep thin black stroke */
       box-shadow: var(--shadow-active);
     }
 
     .tab.active:hover{
       background: var(--accent-hover);
-      border-color: var(--accent-hover);
       box-shadow: var(--shadow-hover);
       transform: translateY(-1px);
     }
 
-    /* Mobile CTA: show only on mobile */
+    /* Mobile CTA: matches active style, with black text + black stroke */
     .mobile-cta{
       display: none;
       text-decoration: none;
 
       font-family: var(--font-body);
-      font-weight: 400;            /* not bold */
+      font-weight: 400;
       font-size: 15px;
 
       border-radius: var(--btn-radius);
       padding: 10px 16px;
 
       background: var(--accent);
-      color: var(--ink);           /* black text (your request) */
-      border: 1px solid var(--accent);
+      color: var(--ink);                /* ALWAYS black */
+      border: 1px solid var(--stroke);  /* thin black stroke */
       box-shadow: var(--shadow-active);
 
       text-align: center;
       margin: 6px 0 8px;
 
-      transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.06s ease;
+      transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.06s ease;
     }
 
     .mobile-cta:hover{
       background: var(--accent-hover);
-      border-color: var(--accent-hover);
       box-shadow: var(--shadow-hover);
       transform: translateY(-1px);
     }
@@ -166,7 +164,7 @@
     }
     .taplistio-tap{
       padding: 14px 0;
-      border-bottom: 1px solid rgba(17,24,39,0.12);
+      border-bottom: 1px solid rgba(17,17,17,0.12);
     }
     .taplistio-beverage-name{
       font-family: var(--font-display);
